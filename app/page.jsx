@@ -1,25 +1,31 @@
 "use client";
 
 import { useQueryState } from "./useQueryState";
+import { useDebounceValue } from "./useDebounceValue";
+import { useAPiKey } from "./useApiKeyRequired";
+import useMovieQuery from "./useMovieQuery";
 
 export default function Home() {
-  const [query, setQuery] = useQueryState("search", "");
+  const [queryState, setQueryState] = useQueryState("search", "");
+  const debouncedQuery = useDebounceValue(queryState, 500);
+  useAPiKey();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="min-h-full min-w-full  flex flex-col items-center">
         <h1 className="scroll-m-20 font-caption text-4xl font-extrabold tracking-tight lg:text-5xl">
           MovieFinder
         </h1>
-        <fieldset className="flex justify-center m-[50px] px-8 py-4 text-[1rem] border border-neutral rounded-[10px] w-full">
+        <fieldset className="flex justify-center m-[50px] px-8 py-4 text-[1rem] border border-neutral rounded-[10px] w-1/3">
           <legend className="px-1">Search</legend>
           <label className="input input-bordered flex items-center gap-2 w-full">
             <input
-              value={query}
+              value={queryState}
               type="text"
               className="grow w-full"
               placeholder="Search"
               onChange={(e) => {
-                setQuery(e.target.value);
+                setQueryState(e.target.value);
               }}
             />
             <svg
@@ -36,7 +42,7 @@ export default function Home() {
             </svg>
           </label>
         </fieldset>
-        <p>{query}</p>
+        <p>Debounced Value : {debouncedQuery}</p>
       </div>
     </main>
   );
